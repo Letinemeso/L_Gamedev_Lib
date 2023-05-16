@@ -47,13 +47,13 @@ void Graph::allocate_nodes(unsigned int _amount)
 }
 
 
-void Graph::link_nodes(unsigned int _id_1, unsigned int _id_2, bool _mutually)
+void Graph::link_nodes(unsigned int _id_1, unsigned int _id_2, unsigned int _distance, bool _mutually)
 {
     L_ASSERT(_id_1 < m_nodes_amount && _id_2 < m_nodes_amount);
 
-    m_nodes[_id_1].link_with(_id_2);
+    m_nodes[_id_1].link_with(_id_2, _distance);
     if(_mutually)
-        m_nodes[_id_2].link_with(_id_1);
+        m_nodes[_id_2].link_with(_id_1, _distance);
 }
 
 void Graph::unlink_nodes(unsigned int _id_1, unsigned int _id_2)
@@ -65,16 +65,23 @@ void Graph::unlink_nodes(unsigned int _id_1, unsigned int _id_2)
 
 
 
-bool Graph::have_connection(unsigned int _id_1, unsigned int _id_2) const
+unsigned int Graph::distance_if_linked(unsigned int _id_1, unsigned int _id_2) const
 {
     L_ASSERT(_id_1 < m_nodes_amount && _id_2 < m_nodes_amount);
 
-    return m_nodes[_id_1].linked_with(_id_2);
+    return m_nodes[_id_1].distance_if_linked(_id_2);
 }
 
-unsigned int Graph::nodes_amount_of_connections(unsigned int _id) const
+unsigned int Graph::nodes_links_amount(unsigned int _id) const
 {
     L_ASSERT(_id < m_nodes_amount);
 
     return m_nodes[_id].connections_amount();
+}
+
+const LDS::Map<unsigned int, unsigned int>& Graph::nodes_links(unsigned int _id) const
+{
+    L_ASSERT(_id < m_nodes_amount);
+
+    return m_nodes[_id].connections();
 }

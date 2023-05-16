@@ -15,5 +15,6 @@ HEADERS += \
 
 SOURCES += \
     source/Graph/Graph.cpp \
-    source/Graph/Graph_Node.cpp
+    source/Graph/Graph_Node.cpp \
+    source/Graph/Pathfinder.cpp
 

@@ -27,12 +27,13 @@ namespace LGL
         void clear();
         void allocate_nodes(unsigned int _amount);
 
-        void link_nodes(unsigned int _id_1, unsigned int _id_2, bool _mutually = true);
+        void link_nodes(unsigned int _id_1, unsigned int _id_2, unsigned int _distance, bool _mutually = true);
         void unlink_nodes(unsigned int _id_1, unsigned int _id_2);
 
     public:
-        bool have_connection(unsigned int _id_1, unsigned int _id_2) const;
-        unsigned int nodes_amount_of_connections(unsigned int _id) const;
+        unsigned int distance_if_linked(unsigned int _id_1, unsigned int _id_2) const;
+        unsigned int nodes_links_amount(unsigned int _id) const;
+        const LDS::Map<unsigned int, unsigned int>& nodes_links(unsigned int _id) const;
 
     };
 
