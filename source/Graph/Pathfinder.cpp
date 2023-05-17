@@ -116,14 +116,6 @@ void Pathfinder::process(unsigned int _start_id, unsigned int _finish_id)
     for(unsigned int i=0; i<nodes_amount; ++i)
         nodes[i].distance_to_finish = m_calculate_distance_func(i, _finish_id);
 
-    nodes[_start_id].is_processed = true;
-//    for(LDS::Map<unsigned int, unsigned int>::Const_Iterator it = m_graph->nodes_links(_start_id).iterator(); !it.end_reached(); ++it)
-//    {
-//        nodes[*it].is_being_processed = true;
-//        nodes[*it].previous = _start_id;
-//    }
-    M_update_neighbours(nodes, _start_id);
-
     unsigned int current_id = _start_id;
     do
     {
