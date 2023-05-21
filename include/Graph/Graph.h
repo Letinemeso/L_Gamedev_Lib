@@ -28,7 +28,7 @@ namespace LGL
         void allocate_nodes(unsigned int _amount);
 
         void link_nodes(unsigned int _id_1, unsigned int _id_2, unsigned int _distance, bool _mutually = true);
-        void unlink_nodes(unsigned int _id_1, unsigned int _id_2);
+        void unlink_nodes(unsigned int _id_1, unsigned int _id_2, bool _mutually = true);
 
     public:
         unsigned int distance_if_linked(unsigned int _id_1, unsigned int _id_2) const;

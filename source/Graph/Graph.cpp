@@ -56,11 +56,13 @@ void Graph::link_nodes(unsigned int _id_1, unsigned int _id_2, unsigned int _dis
         m_nodes[_id_2].link_with(_id_1, _distance);
 }
 
-void Graph::unlink_nodes(unsigned int _id_1, unsigned int _id_2)
+void Graph::unlink_nodes(unsigned int _id_1, unsigned int _id_2, bool _mutually)
 {
     L_ASSERT(_id_1 < m_nodes_amount && _id_2 < m_nodes_amount);
 
     m_nodes[_id_1].unlink_with(_id_2);
+    if(_mutually)
+        m_nodes[_id_2].unlink_with(_id_1);
 }
 
 
