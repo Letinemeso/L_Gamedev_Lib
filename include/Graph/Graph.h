@@ -17,6 +17,8 @@ namespace LGL
         Graph();
         Graph(const Graph& _other);
         Graph(Graph&& _other);
+        void operator=(const Graph& _other);
+        void operator=(Graph&&  _other);
 
         ~Graph();
 

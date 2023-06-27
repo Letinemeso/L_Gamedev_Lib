@@ -24,6 +24,22 @@ Graph::Graph(Graph&& _other)
     _other.m_nodes = nullptr;
 }
 
+void Graph::operator=(const Graph& _other)
+{
+    m_nodes_amount = _other.m_nodes_amount;
+    m_nodes = new Graph_Node[m_nodes_amount];
+    for(unsigned int i=0; i < m_nodes_amount; ++i)
+        m_nodes[i] = _other.m_nodes[i];
+}
+
+void Graph::operator=(Graph&& _other)
+{
+    m_nodes_amount = _other.m_nodes_amount;
+    _other.m_nodes_amount = 0;
+    m_nodes = _other.m_nodes;
+    _other.m_nodes = nullptr;
+}
+
 
 Graph::~Graph()
 {
