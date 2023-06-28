@@ -11,6 +11,13 @@ Pathfinder::Pathfinder()
 Pathfinder::Pathfinder(const Pathfinder& _other)
 {
     m_graph = _other.m_graph;
+    m_calculate_distance_func = _other.m_calculate_distance_func;
+}
+
+void Pathfinder::operator=(const Pathfinder& _other)
+{
+    m_graph = _other.m_graph;
+    m_calculate_distance_func = _other.m_calculate_distance_func;
 }
 
 

@@ -52,6 +52,7 @@ namespace LGL
     public:
         Pathfinder();
         Pathfinder(const Pathfinder& _other);
+        void operator=(const Pathfinder& _other);
 
         Pathfinder(const Graph* _graph, LST::Function<unsigned int(unsigned int, unsigned int)> _calculate_distance_func);
 
