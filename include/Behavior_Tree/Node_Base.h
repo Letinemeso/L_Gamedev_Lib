@@ -1,5 +1,4 @@
-#ifndef NODE_BASE_H
-#define NODE_BASE_H
+#pragma once
 
 
 namespace LGL
@@ -12,18 +11,16 @@ namespace LGL
         In_Progress
     };
 
+    template <typename... Args>
     class Node_Base
     {
     public:
-        Node_Base();
-        virtual ~Node_Base();
+        Node_Base() { }
+        virtual ~Node_Base() { }
 
     public:
-        virtual BT_Execution_Result process() const = 0;
+        virtual BT_Execution_Result process(Args... _args) const = 0;
 
     };
 
 }
-
-
-#endif // NODE_BASE_H
