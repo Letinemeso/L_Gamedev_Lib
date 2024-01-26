@@ -31,7 +31,7 @@ namespace LGL
         inline const Node_Base_List_Type& childs() const { return m_childs; }
 
     public:
-        BT_Execution_Result process() const override;
+        BT_Execution_Result process(Args... _args) const override;
 
     };
 
@@ -87,13 +87,13 @@ namespace LGL
 
 
     template <typename... Args>
-    BT_Execution_Result Sequence<Args...>::process() const
+    BT_Execution_Result Sequence<Args...>::process(Args... _args) const
     {
         L_ASSERT(m_childs.size() > 0);
         BT_Execution_Result result = BT_Execution_Result::Success;
         for(typename Node_Base_List_Type::Const_Iterator it = m_childs.begin(); !it.end_reached(); ++it)
         {
-            result = (*it)->process();
+            result = (*it)->process(_args...);
 
             if(result == BT_Execution_Result::Success)
                 continue;
