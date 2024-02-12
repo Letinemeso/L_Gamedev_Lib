@@ -93,7 +93,7 @@ namespace LGL
         BT_Execution_Result result = BT_Execution_Result::Success;
         for(typename Node_Base_List_Type::Const_Iterator it = m_childs.begin(); !it.end_reached(); ++it)
         {
-            result = (*it)->process();
+            result = (*it)->process(_args...);
 
             if(result == BT_Execution_Result::Fail)
                 continue;
