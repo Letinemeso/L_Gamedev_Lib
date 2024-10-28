@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 FILE(GLOB_RECURSE Headers "include/*.h")
-add_custom_target(L_Gamedev_Lib_include SOURCES ${Headers})
+add_custom_target(_L_Gamedev_Lib_include SOURCES ${Headers})
 FILE(GLOB_RECURSE Sources "source/*.cpp")
 
 add_library(L_Gamedev_Lib STATIC ${Sources})
