@@ -85,6 +85,46 @@ void Voxel_2D_Controller::remove_voxel(int _index_x, int _index_y)
 
 
 
+void Voxel_2D_Controller::M_apply_id_to_voxel_recursive(Voxel_2D* _voxel, const Voxel_Intersection_Check_Func& _should_apply_to_whole, const Voxel_Intersection_Check_Func& _should_apply_partially, unsigned int _id)
+{
+    if(_should_apply_to_whole(_voxel))
+    {
+        if(_voxel->is_split())
+            _voxel->merge();
+
+        _voxel->set_id(_id);
+        return;
+    }
+
+    if(!_should_apply_partially(_voxel))
+        return;
+
+    if(_voxel->reached_max_depth())
+    {
+        _voxel->set_id(_id);
+        return;
+    }
+
+    if(!_voxel->is_split())
+        _voxel->split();
+
+    for(unsigned int i=0; i<4; ++i)
+        M_apply_id_to_voxel_recursive(_voxel->child(i), _should_apply_to_whole, _should_apply_partially, _id);
+}
+
+
+
+void Voxel_2D_Controller::apply_id_to_voxels(const Voxel_Intersection_Check_Func& _should_apply_to_whole, const Voxel_Intersection_Check_Func& _should_apply_partially, unsigned int _id)
+{
+    L_ASSERT(_should_apply_to_whole);
+    L_ASSERT(_should_apply_partially);
+
+    for(Voxel_List::Iterator it = m_voxels.begin(); !it.end_reached(); ++it)
+        M_apply_id_to_voxel_recursive(it->voxel, _should_apply_to_whole, _should_apply_partially, _id);
+}
+
+
+
 void Voxel_2D_Controller::update()
 {
     for(Voxel_List::Iterator it = m_voxels.begin(); !it.end_reached(); ++it)

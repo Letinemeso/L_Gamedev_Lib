@@ -45,8 +45,9 @@ namespace LGL
         inline Voxel_2D* child(unsigned int _index) { L_ASSERT(_index < 4); return m_childs[_index]; }
         inline const Voxel_2D* child(unsigned int _index) const { L_ASSERT(_index < 4); return m_childs[_index]; }
 
+        inline bool reached_max_depth() const { return m_depth == m_max_depth; }
         inline bool is_split() const { return m_childs[0] != nullptr; }
-        inline bool can_be_split() const { return (m_depth < m_max_depth) && !is_split(); }
+        inline bool can_be_split() const { return !reached_max_depth() && !is_split(); }
 
     public:
         bool should_be_merged() const;
