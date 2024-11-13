@@ -87,6 +87,9 @@ void Voxel_2D_Controller::remove_voxel(int _index_x, int _index_y)
 
 void Voxel_2D_Controller::M_apply_id_to_voxel_recursive(Voxel_2D* _voxel, const Voxel_Intersection_Check_Func& _should_apply_to_whole, const Voxel_Intersection_Check_Func& _should_apply_partially, unsigned int _id)
 {
+    if(!_voxel->is_split() && _voxel->id() == _id)
+        return;
+
     if(_should_apply_to_whole(_voxel))
     {
         if(_voxel->is_split())
