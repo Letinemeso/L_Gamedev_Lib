@@ -9,7 +9,10 @@ namespace LGL
     class Voxel_2D
     {
     private:
-        const unsigned int m_max_depth = 1;
+        friend class Voxel_2D_Serializer;
+
+    private:
+        unsigned int m_max_depth = 1;
         unsigned int m_depth = 0;
 
         unsigned int m_id = 0;
@@ -24,6 +27,9 @@ namespace LGL
         Voxel_2D* m_parent = nullptr;
         Voxel_2D* m_childs[4] { nullptr };
 
+    private:
+        Voxel_2D() { }
+
     public:
         Voxel_2D(Voxel_2D* _parent, unsigned int _max_depth, unsigned int _depth, unsigned int _id, float _position_x, float _position_y, float _size_x, float _size_y);
         ~Voxel_2D();
@@ -37,6 +43,7 @@ namespace LGL
         inline float size_x() const { return m_size_x; }
         inline float size_y() const { return m_size_y; }
 
+        inline unsigned int max_depth() const { return m_max_depth; }
         inline unsigned int depth() const { return m_depth; }
         inline unsigned int id() const { return m_id; }
 

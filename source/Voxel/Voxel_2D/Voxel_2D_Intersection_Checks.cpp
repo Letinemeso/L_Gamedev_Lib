@@ -32,18 +32,27 @@ bool LGL::voxel_2d_touches_circle(Voxel_2D* _voxel, const float* _circle_center,
 {
     float radius_squared = _circle_radius * _circle_radius;
 
-    if(((_voxel->position_x() - _circle_center[0]) * (_voxel->position_y() - _circle_center[1])) <= radius_squared)
+    float left_squared = _voxel->position_x() - _circle_center[0];
+    left_squared *= left_squared;
+    float right_squared = _voxel->position_x() + _voxel->size_x() - _circle_center[0];
+    right_squared *= right_squared;
+    float bottom_squared = _voxel->position_y() - _circle_center[1];
+    bottom_squared *= bottom_squared;
+    float top_squared = _voxel->position_y() + _voxel->size_y() - _circle_center[1];
+    top_squared *= top_squared;
+
+    if(left_squared + bottom_squared <= radius_squared)
         return true;
-    if(((_voxel->position_x() + _voxel->size_x() - _circle_center[0]) * (_voxel->position_y() - _circle_center[1])) <= radius_squared)
+    if(right_squared + bottom_squared <= radius_squared)
         return true;
-    if(((_voxel->position_x() - _circle_center[0]) * (_voxel->position_y() + _voxel->size_y() - _circle_center[1])) <= radius_squared)
+    if(left_squared + top_squared <= radius_squared)
         return true;
-    if(((_voxel->position_x() + _voxel->size_x() - _circle_center[0]) * (_voxel->position_y() + _voxel->size_y() - _circle_center[1])) <= radius_squared)
+    if(right_squared + top_squared <= radius_squared)
         return true;
 
-    if(_circle_center[0] < _voxel->position_x() && _circle_center[0] > _voxel->position_x() * _voxel->size_x())
+    if(_circle_center[0] < _voxel->position_x() || _circle_center[0] > _voxel->position_x() + _voxel->size_x())
         return false;
-    if(_circle_center[1] < _voxel->position_y() && _circle_center[1] > _voxel->position_y() * _voxel->size_y())
+    if(_circle_center[1] < _voxel->position_y() || _circle_center[1] > _voxel->position_y() + _voxel->size_y())
         return false;
 
     return true;
@@ -124,23 +133,6 @@ bool LGL::voxel_2d_touches_triangle(Voxel_2D* _voxel, const float* _vertex_0, co
                 return true;
         }
     }
-
-    auto point_inside_voxel = [_voxel](const float* _point)
-    {
-        if(_point[0] < _voxel->position_x() && _point[0] > _voxel->position_x() * _voxel->size_x())
-            return false;
-        if(_point[1] < _voxel->position_y() && _point[1] > _voxel->position_y() * _voxel->size_y())
-            return false;
-
-        return true;
-    };
-
-    if(point_inside_voxel(_vertex_0))
-        return true;
-    if(point_inside_voxel(_vertex_1))
-        return true;
-    if(point_inside_voxel(_vertex_2))
-        return true;
 
     return false;
 }

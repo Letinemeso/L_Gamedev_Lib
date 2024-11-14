@@ -48,7 +48,12 @@ void Voxel_2D::M_merge_voxel_tree_if_needed()
     if(!m_parent->should_be_merged())
         return;
 
+    Voxel_2D* parent = m_parent;
+    unsigned int id = m_id;
+
     m_parent->merge();
+
+    parent->set_id(id);
 }
 
 

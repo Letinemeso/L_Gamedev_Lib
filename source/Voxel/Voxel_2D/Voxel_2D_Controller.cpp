@@ -47,11 +47,51 @@ typename Voxel_2D_Controller::Voxel_List::Iterator Voxel_2D_Controller::M_find_v
 
 
 
+void Voxel_2D_Controller::load_voxels(float _world_center_x, float _world_center_y)
+{
+    m_serializer.set_file_path_format(m_save_folder + '/' + m_save_name + '/' + "Chunk_");
+
+    int center_index_x = _world_center_x / m_expected_voxel_size_x;
+    int center_index_y = _world_center_y / m_expected_voxel_size_y;
+
+    int voxels_from_center = m_loaded_voxels_amount_from_center;
+
+    for(int x = -voxels_from_center; x < voxels_from_center; ++x)
+    {
+        for(int y = -voxels_from_center; y < voxels_from_center; ++y)
+        {
+            int index_x = center_index_x + x;
+            int index_y = center_index_y + y;
+
+            Voxel_2D* voxel = m_serializer.load_voxel(index_x, index_y, m_expected_voxel_size_x, m_expected_voxel_size_y, m_expected_max_depth);
+            if(!voxel)
+                continue;
+
+            m_voxels.push_back({index_x, index_y, voxel});
+        }
+    }
+}
+
+void Voxel_2D_Controller::save_voxels()
+{
+    m_serializer.set_file_path_format(m_save_folder + '/' + m_save_name + '/' + "Chunk_");
+
+    for(Voxel_List::Iterator it = m_voxels.begin(); !it.end_reached(); ++it)
+    {
+        Voxel_Data& voxel_data = *it;
+
+        m_serializer.save_voxel(voxel_data.voxel, voxel_data.index_x, voxel_data.index_y);
+    }
+}
+
+
+
 void Voxel_2D_Controller::insert_voxel(Voxel_2D* _voxel)
 {
     L_ASSERT(!M_find_voxel(_voxel).is_ok());
     L_ASSERT(fabs(m_expected_voxel_size_x - _voxel->size_x()) < 0.0001f);
     L_ASSERT(fabs(m_expected_voxel_size_y - _voxel->size_y()) < 0.0001f);
+    L_ASSERT(m_expected_max_depth == _voxel->max_depth());
 
     Voxel_Data voxel_data;
 
