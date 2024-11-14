@@ -103,7 +103,7 @@ void Voxel_2D_Serializer::M_fill_voxel_with_data(Voxel_2D* _voxel) const
 
 void Voxel_2D_Serializer::save_voxel(const Voxel_2D* _voxel, int _index_x, int _index_y) const
 {
-    std::string file_path = m_file_path_format + '_' + std::to_string(_index_x) + std::to_string(_index_y) + ".vch";
+    std::string file_path = m_file_path_format + '_' + std::to_string(_index_x) + '_' + std::to_string(_index_y) + ".vch";
     LST::File file(file_path);
 
     std::string serialized_data = M_serialize_voxel(_voxel);
@@ -114,7 +114,7 @@ void Voxel_2D_Serializer::save_voxel(const Voxel_2D* _voxel, int _index_x, int _
 
 Voxel_2D* Voxel_2D_Serializer::load_voxel(int _index_x, int _index_y, float _expected_size_x, float _expected_size_y, unsigned int _expected_max_depth) const
 {
-    std::string file_path = m_file_path_format + '_' + std::to_string(_index_x) + std::to_string(_index_y) + ".vch";
+    std::string file_path = m_file_path_format + '_' + std::to_string(_index_x) + '_' + std::to_string(_index_y) + ".vch";
     LST::File file(file_path);
 
     if(!file.exists())
