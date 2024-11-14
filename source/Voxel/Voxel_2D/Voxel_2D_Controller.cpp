@@ -153,7 +153,10 @@ bool Voxel_2D_Controller::M_apply_id_to_voxel_recursive(Voxel_2D* _voxel, const 
 
     bool result = false;
     for(unsigned int i=0; i<4; ++i)
-        result = result || M_apply_id_to_voxel_recursive(_voxel->child(i), _should_apply_to_whole, _should_apply_partially, _id);
+    {
+        if(M_apply_id_to_voxel_recursive(_voxel->child(i), _should_apply_to_whole, _should_apply_partially, _id))
+            result = true;
+    }
 
     return result;
 }
@@ -168,8 +171,11 @@ void Voxel_2D_Controller::apply_id_to_voxels(const Voxel_Intersection_Check_Func
     for(Voxel_List::Iterator it = m_voxels.begin(); !it.end_reached(); ++it)
     {
         bool changes_were_made = M_apply_id_to_voxel_recursive(it->voxel, _should_apply_to_whole, _should_apply_partially, _id);
-        if(changes_were_made)
-            it->changes_were_made = true;
+        if(!changes_were_made)
+            continue;
+
+        it->changes_were_made = true;
+        it->voxel->merge_subtrees_if_needed();
     }
 }
 

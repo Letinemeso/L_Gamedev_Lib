@@ -40,24 +40,6 @@ bool Voxel_2D::should_be_merged() const
 
 
 
-void Voxel_2D::M_merge_voxel_tree_if_needed()
-{
-    if(!m_parent)
-        return;
-
-    if(!m_parent->should_be_merged())
-        return;
-
-    Voxel_2D* parent = m_parent;
-    unsigned int id = m_id;
-
-    m_parent->merge();
-
-    parent->set_id(id);
-}
-
-
-
 void Voxel_2D::split()
 {
     L_ASSERT(!is_split());
@@ -81,4 +63,19 @@ void Voxel_2D::merge()
         delete m_childs[i];
         m_childs[i] = nullptr;
     }
+}
+
+void Voxel_2D::merge_subtrees_if_needed()
+{
+    if(!is_split())
+        return;
+
+    for(unsigned int i=0; i<4; ++i)
+        m_childs[i]->merge_subtrees_if_needed();
+
+    if(!should_be_merged())
+        return;
+
+    m_id = m_childs[0]->id();
+    merge();
 }

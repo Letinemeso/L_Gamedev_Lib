@@ -35,7 +35,7 @@ namespace LGL
         ~Voxel_2D();
 
     public:
-        inline void set_id(unsigned int _value) { m_id = _value; M_merge_voxel_tree_if_needed(); }
+        inline void set_id(unsigned int _value) { m_id = _value; }
 
         inline float position_x() const { return m_position_x; }
         inline float position_y() const { return m_position_y; }
@@ -59,12 +59,10 @@ namespace LGL
     public:
         bool should_be_merged() const;
 
-    private:
-        void M_merge_voxel_tree_if_needed();
-
     public:
         void split();
         void merge();
+        void merge_subtrees_if_needed();
 
     };
 
