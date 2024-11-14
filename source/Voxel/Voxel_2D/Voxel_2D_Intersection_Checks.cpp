@@ -30,32 +30,22 @@ bool LGL::voxel_2d_inside_circle(Voxel_2D* _voxel, const float* _circle_center, 
 
 bool LGL::voxel_2d_touches_circle(Voxel_2D* _voxel, const float* _circle_center, float _circle_radius)
 {
-    float radius_squared = _circle_radius * _circle_radius;
+    float rectX = _voxel->position_x();
+    float rectY = _voxel->position_y();
+    float rectWidth = _voxel->size_x();
+    float rectHeight = _voxel->size_y();
 
-    float left_squared = _voxel->position_x() - _circle_center[0];
-    left_squared *= left_squared;
-    float right_squared = _voxel->position_x() + _voxel->size_x() - _circle_center[0];
-    right_squared *= right_squared;
-    float bottom_squared = _voxel->position_y() - _circle_center[1];
-    bottom_squared *= bottom_squared;
-    float top_squared = _voxel->position_y() + _voxel->size_y() - _circle_center[1];
-    top_squared *= top_squared;
+    float circleX = _circle_center[0];
+    float circleY = _circle_center[1];
 
-    if(left_squared + bottom_squared <= radius_squared)
-        return true;
-    if(right_squared + bottom_squared <= radius_squared)
-        return true;
-    if(left_squared + top_squared <= radius_squared)
-        return true;
-    if(right_squared + top_squared <= radius_squared)
-        return true;
+    float closestX = std::max(rectX, std::min(circleX, rectX + rectWidth));
+    float closestY = std::max(rectY, std::min(circleY, rectY + rectHeight));
 
-    if(_circle_center[0] < _voxel->position_x() || _circle_center[0] > _voxel->position_x() + _voxel->size_x())
-        return false;
-    if(_circle_center[1] < _voxel->position_y() || _circle_center[1] > _voxel->position_y() + _voxel->size_y())
-        return false;
+    float distanceX = circleX - closestX;
+    float distanceY = circleY - closestY;
+    float distanceSquared = distanceX * distanceX + distanceY * distanceY;
 
-    return true;
+    return distanceSquared <= _circle_radius * _circle_radius;
 }
 
 
