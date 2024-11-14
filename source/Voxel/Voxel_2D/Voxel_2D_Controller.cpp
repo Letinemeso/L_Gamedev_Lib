@@ -125,10 +125,10 @@ void Voxel_2D_Controller::remove_voxel(int _index_x, int _index_y)
 
 
 
-void Voxel_2D_Controller::M_apply_id_to_voxel_recursive(Voxel_2D* _voxel, const Voxel_Intersection_Check_Func& _should_apply_to_whole, const Voxel_Intersection_Check_Func& _should_apply_partially, unsigned int _id)
+bool Voxel_2D_Controller::M_apply_id_to_voxel_recursive(Voxel_2D* _voxel, const Voxel_Intersection_Check_Func& _should_apply_to_whole, const Voxel_Intersection_Check_Func& _should_apply_partially, unsigned int _id)
 {
     if(!_voxel->is_split() && _voxel->id() == _id)
-        return;
+        return false;
 
     if(_should_apply_to_whole(_voxel))
     {
@@ -136,23 +136,26 @@ void Voxel_2D_Controller::M_apply_id_to_voxel_recursive(Voxel_2D* _voxel, const 
             _voxel->merge();
 
         _voxel->set_id(_id);
-        return;
+        return true;
     }
 
     if(!_should_apply_partially(_voxel))
-        return;
+        return false;
 
     if(_voxel->reached_max_depth())
     {
         _voxel->set_id(_id);
-        return;
+        return true;
     }
 
     if(!_voxel->is_split())
         _voxel->split();
 
+    bool result = false;
     for(unsigned int i=0; i<4; ++i)
-        M_apply_id_to_voxel_recursive(_voxel->child(i), _should_apply_to_whole, _should_apply_partially, _id);
+        result = result || M_apply_id_to_voxel_recursive(_voxel->child(i), _should_apply_to_whole, _should_apply_partially, _id);
+
+    return result;
 }
 
 
@@ -163,15 +166,17 @@ void Voxel_2D_Controller::apply_id_to_voxels(const Voxel_Intersection_Check_Func
     L_ASSERT(_should_apply_partially);
 
     for(Voxel_List::Iterator it = m_voxels.begin(); !it.end_reached(); ++it)
-        M_apply_id_to_voxel_recursive(it->voxel, _should_apply_to_whole, _should_apply_partially, _id);
+    {
+        bool changes_were_made = M_apply_id_to_voxel_recursive(it->voxel, _should_apply_to_whole, _should_apply_partially, _id);
+        if(changes_were_made)
+            it->changes_were_made = true;
+    }
 }
 
 
 
-void Voxel_2D_Controller::update()
+void Voxel_2D_Controller::mark_all_unchanged()
 {
     for(Voxel_List::Iterator it = m_voxels.begin(); !it.end_reached(); ++it)
-    {
-        Voxel_Data& voxel_data = *it;
-    }
+        it->changes_were_made = false;
 }

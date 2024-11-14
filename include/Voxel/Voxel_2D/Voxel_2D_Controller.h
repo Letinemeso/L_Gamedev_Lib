@@ -18,6 +18,7 @@ namespace LGL
             int index_x = 0;
             int index_y = 0;
             Voxel_2D* voxel = nullptr;
+            bool changes_were_made = false;
         };
 
     public:
@@ -67,13 +68,13 @@ namespace LGL
         void remove_voxel(int _index_x, int _index_y);
 
     private:
-        void M_apply_id_to_voxel_recursive(Voxel_2D* _voxel, const Voxel_Intersection_Check_Func& _should_apply_to_whole, const Voxel_Intersection_Check_Func& _should_apply_partially, unsigned int _id);
+        bool M_apply_id_to_voxel_recursive(Voxel_2D* _voxel, const Voxel_Intersection_Check_Func& _should_apply_to_whole, const Voxel_Intersection_Check_Func& _should_apply_partially, unsigned int _id);
 
     public:
         void apply_id_to_voxels(const Voxel_Intersection_Check_Func& _should_apply_to_whole, const Voxel_Intersection_Check_Func& _should_apply_partially, unsigned int _id);
 
     public:
-        void update();
+        void mark_all_unchanged();
 
     };
 
