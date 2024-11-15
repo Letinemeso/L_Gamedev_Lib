@@ -17,6 +17,8 @@ Voxel_2D_Controller::~Voxel_2D_Controller()
         Voxel_Data& voxel_data = *it;
         delete voxel_data.voxel;
     }
+
+    delete m_generator;
 }
 
 
@@ -45,14 +47,36 @@ typename Voxel_2D_Controller::Voxel_List::Iterator Voxel_2D_Controller::M_find_v
     return {};
 }
 
-
-
-void Voxel_2D_Controller::load_voxels(float _world_center_x, float _world_center_y)
+std::string Voxel_2D_Controller::M_construct_save_file_name_format() const
 {
-    m_serializer.set_file_path_format(m_save_folder + '/' + m_save_name + '/' + "Chunk_");
+    return m_save_folder + '/' + "Chunk_";
+}
 
-    int center_index_x = _world_center_x / m_expected_voxel_size_x;
-    int center_index_y = _world_center_y / m_expected_voxel_size_y;
+
+
+void Voxel_2D_Controller::remove_all_voxels()
+{
+    for(Voxel_List::Iterator it = m_voxels.begin(); !it.end_reached(); ++it)
+    {
+        Voxel_Data& voxel_data = *it;
+
+        if(m_on_voxel_removed)
+            m_on_voxel_removed(voxel_data);
+
+        delete voxel_data.voxel;
+    }
+    m_voxels.clear();
+}
+
+void Voxel_2D_Controller::reload_voxels(float _world_center_x, float _world_center_y)
+{
+    L_ASSERT(m_serializer.file_path_format().size() > 0);
+
+    save_voxels();
+    remove_all_voxels();
+
+    m_current_world_center_x = _world_center_x / m_expected_voxel_size_x;
+    m_current_world_center_y = _world_center_y / m_expected_voxel_size_y;
 
     int voxels_from_center = m_loaded_voxels_amount_from_center;
 
@@ -60,21 +84,35 @@ void Voxel_2D_Controller::load_voxels(float _world_center_x, float _world_center
     {
         for(int y = -voxels_from_center; y < voxels_from_center; ++y)
         {
-            int index_x = center_index_x + x;
-            int index_y = center_index_y + y;
+            int index_x = m_current_world_center_x + x;
+            int index_y = m_current_world_center_y + y;
 
             Voxel_2D* voxel = m_serializer.load_voxel(index_x, index_y, m_expected_voxel_size_x, m_expected_voxel_size_y, m_expected_max_depth);
             if(!voxel)
-                continue;
+            {
+                if(!m_generator)
+                    continue;
+                voxel = m_generator->generate(x, y, m_expected_max_depth, m_expected_voxel_size_x, m_expected_voxel_size_y);
+            }
 
-            m_voxels.push_back({index_x, index_y, voxel});
+            L_ASSERT(voxel);
+
+            Voxel_Data voxel_data;
+            voxel_data.index_x = index_x;
+            voxel_data.index_y = index_y;
+            voxel_data.voxel = voxel;
+
+            if(m_on_voxel_added)
+                m_on_voxel_added(voxel_data);
+
+            m_voxels.push_back(voxel_data);
         }
     }
 }
 
 void Voxel_2D_Controller::save_voxels()
 {
-    m_serializer.set_file_path_format(m_save_folder + '/' + m_save_name + '/' + "Chunk_");
+    L_ASSERT(m_serializer.file_path_format().size() > 0);
 
     for(Voxel_List::Iterator it = m_voxels.begin(); !it.end_reached(); ++it)
     {
@@ -82,6 +120,77 @@ void Voxel_2D_Controller::save_voxels()
 
         m_serializer.save_voxel(voxel_data.voxel, voxel_data.index_x, voxel_data.index_y);
     }
+}
+
+void Voxel_2D_Controller::update_world_center(float _world_center_x, float _world_center_y)
+{
+    L_ASSERT(m_serializer.file_path_format().size() > 0);
+
+    int center_index_x = _world_center_x / m_expected_voxel_size_x;
+    int center_index_y = _world_center_y / m_expected_voxel_size_y;
+
+    if(center_index_x == m_current_world_center_x && center_index_y == m_current_world_center_y && m_voxels.size() > 0)
+        return;
+
+    int voxels_from_center = m_loaded_voxels_amount_from_center;
+
+    int left_voxel_index = center_index_x - voxels_from_center;
+    int right_voxel_index = center_index_x + voxels_from_center;
+    int bottom_voxel_index = center_index_y - voxels_from_center;
+    int top_voxel_index = center_index_y + voxels_from_center;
+
+    Voxel_List::Iterator it = m_voxels.begin();
+    while(!it.end_reached())                        //  if constantly searching through the list will be too much, there's an option to calculate
+    {                                               //  current voxel boundaries and use them later to identify the need to load another voxel
+        Voxel_Data& voxel_data = *it;
+
+        if(voxel_data.index_x >= left_voxel_index && voxel_data.index_x <= right_voxel_index && voxel_data.index_y >= bottom_voxel_index && voxel_data.index_y <= top_voxel_index)
+        {
+            ++it;
+            continue;
+        }
+
+        m_serializer.save_voxel(voxel_data.voxel, voxel_data.index_x, voxel_data.index_y);
+
+        if(m_on_voxel_removed)
+            m_on_voxel_removed(voxel_data);
+
+        delete voxel_data.voxel;
+        it = m_voxels.erase_and_iterate_forward(it);
+    }
+
+    for(int x = left_voxel_index; x <= right_voxel_index; ++x)
+    {
+        for(int y = bottom_voxel_index; y <= top_voxel_index; ++y)
+        {
+            Voxel_List::Iterator maybe_voxel_it = M_find_voxel(x, y);
+            if(maybe_voxel_it.is_ok())
+                continue;
+
+            Voxel_2D* voxel = m_serializer.load_voxel(x, y, m_expected_voxel_size_x, m_expected_voxel_size_y, m_expected_max_depth);
+            if(!voxel)
+            {
+                if(!m_generator)
+                    continue;
+                voxel = m_generator->generate(x, y, m_expected_max_depth, m_expected_voxel_size_x, m_expected_voxel_size_y);
+            }
+
+            L_ASSERT(voxel);
+
+            Voxel_Data voxel_data;
+            voxel_data.index_x = x;
+            voxel_data.index_y = y;
+            voxel_data.voxel = voxel;
+
+            if(m_on_voxel_added)
+                m_on_voxel_added(voxel_data);
+
+            m_voxels.push_back(voxel_data);
+        }
+    }
+
+    m_current_world_center_x = center_index_x;
+    m_current_world_center_y = center_index_y;
 }
 
 
@@ -98,8 +207,10 @@ void Voxel_2D_Controller::insert_voxel(Voxel_2D* _voxel)
     voxel_data.index_x = _voxel->position_x() / m_expected_voxel_size_x;
     voxel_data.index_y = _voxel->position_y() / m_expected_voxel_size_y;
     L_ASSERT(!M_find_voxel(voxel_data.index_x, voxel_data.index_y).is_ok());
-
     voxel_data.voxel = _voxel;
+
+    if(m_on_voxel_added)
+        m_on_voxel_added(voxel_data);
 
     m_voxels.push_back(voxel_data);
 }
@@ -109,6 +220,10 @@ void Voxel_2D_Controller::remove_voxel(Voxel_2D* _voxel)
     Voxel_List::Iterator voxel_it = M_find_voxel(_voxel);
     L_ASSERT(voxel_it.is_ok());
 
+    if(m_on_voxel_removed)
+        m_on_voxel_removed(*voxel_it);
+
+    delete _voxel;
     m_voxels.erase(voxel_it);
 }
 
@@ -118,8 +233,11 @@ void Voxel_2D_Controller::remove_voxel(int _index_x, int _index_y)
     L_ASSERT(voxel_it.is_ok());
 
     Voxel_Data& voxel_data = *voxel_it;
-    delete voxel_data.voxel;
 
+    if(m_on_voxel_removed)
+        m_on_voxel_removed(voxel_data);
+
+    delete voxel_data.voxel;
     m_voxels.erase(voxel_it);
 }
 
