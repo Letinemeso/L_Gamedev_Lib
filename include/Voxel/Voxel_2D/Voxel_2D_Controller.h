@@ -6,6 +6,7 @@
 #include <Voxel/Voxel_2D/Voxel_2D.h>
 #include <Voxel/Voxel_2D/Voxel_2D_Serializer.h>
 #include <Voxel/Voxel_2D/Voxel_2D_Generator.h>
+#include <Voxel/Voxel_2D/Voxel_2D_Modification_Tools.h>
 
 
 namespace LGL
@@ -24,7 +25,6 @@ namespace LGL
 
     public:
         using Voxel_List = LDS::List<Voxel_Data>;
-        using Voxel_Intersection_Check_Func = LST::Function<bool(Voxel_2D*)>;
         using Voxel_Action_Callback_Func = LST::Function<void(const Voxel_Data&)>;
 
     private:
@@ -71,6 +71,7 @@ namespace LGL
         Voxel_List::Iterator M_find_voxel(Voxel_2D* _voxel);
         Voxel_List::Iterator M_find_voxel(int _index_x, int _index_y);
         std::string M_construct_save_file_name_format() const;
+        int M_calculate_world_center_index(float _world_center, float _voxel_size) const;
 
     public:
         void remove_all_voxels();
@@ -82,9 +83,6 @@ namespace LGL
         void insert_voxel(Voxel_2D* _voxel);
         void remove_voxel(Voxel_2D* _voxel);
         void remove_voxel(int _index_x, int _index_y);
-
-    private:
-        bool M_apply_id_to_voxel_recursive(Voxel_2D* _voxel, const Voxel_Intersection_Check_Func& _should_apply_to_whole, const Voxel_Intersection_Check_Func& _should_apply_partially, unsigned int _id);
 
     public:
         void apply_id_to_voxels(const Voxel_Intersection_Check_Func& _should_apply_to_whole, const Voxel_Intersection_Check_Func& _should_apply_partially, unsigned int _id);

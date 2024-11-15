@@ -52,6 +52,14 @@ std::string Voxel_2D_Controller::M_construct_save_file_name_format() const
     return m_save_folder + '/' + "Chunk_";
 }
 
+int Voxel_2D_Controller::M_calculate_world_center_index(float _world_center, float _voxel_size) const
+{
+    int result = _world_center / _voxel_size;
+    if(_world_center < 0.0f)
+        result -= 1;
+    return result;
+}
+
 
 
 void Voxel_2D_Controller::remove_all_voxels()
@@ -75,8 +83,8 @@ void Voxel_2D_Controller::reload_voxels(float _world_center_x, float _world_cent
     save_voxels();
     remove_all_voxels();
 
-    m_current_world_center_x = _world_center_x / m_expected_voxel_size_x;
-    m_current_world_center_y = _world_center_y / m_expected_voxel_size_y;
+    m_current_world_center_x = M_calculate_world_center_index(_world_center_x, m_expected_voxel_size_x);
+    m_current_world_center_y = M_calculate_world_center_index(_world_center_y, m_expected_voxel_size_y);
 
     int voxels_from_center = m_loaded_voxels_amount_from_center;
 
@@ -126,8 +134,8 @@ void Voxel_2D_Controller::update_world_center(float _world_center_x, float _worl
 {
     L_ASSERT(m_serializer.file_path_format().size() > 0);
 
-    int center_index_x = _world_center_x / m_expected_voxel_size_x;
-    int center_index_y = _world_center_y / m_expected_voxel_size_y;
+    int center_index_x = M_calculate_world_center_index(_world_center_x, m_expected_voxel_size_x);
+    int center_index_y = M_calculate_world_center_index(_world_center_y, m_expected_voxel_size_y);
 
     if(center_index_x == m_current_world_center_x && center_index_y == m_current_world_center_y && m_voxels.size() > 0)
         return;
@@ -144,7 +152,7 @@ void Voxel_2D_Controller::update_world_center(float _world_center_x, float _worl
     {                                               //  current voxel boundaries and use them later to identify the need to load another voxel
         Voxel_Data& voxel_data = *it;
 
-        if(voxel_data.index_x >= left_voxel_index && voxel_data.index_x <= right_voxel_index && voxel_data.index_y >= bottom_voxel_index && voxel_data.index_y <= top_voxel_index)
+        if(voxel_data.index_x >= left_voxel_index && voxel_data.index_x < right_voxel_index && voxel_data.index_y >= bottom_voxel_index && voxel_data.index_y < top_voxel_index)
         {
             ++it;
             continue;
@@ -159,9 +167,9 @@ void Voxel_2D_Controller::update_world_center(float _world_center_x, float _worl
         it = m_voxels.erase_and_iterate_forward(it);
     }
 
-    for(int x = left_voxel_index; x <= right_voxel_index; ++x)
+    for(int x = left_voxel_index; x < right_voxel_index; ++x)
     {
-        for(int y = bottom_voxel_index; y <= top_voxel_index; ++y)
+        for(int y = bottom_voxel_index; y < top_voxel_index; ++y)
         {
             Voxel_List::Iterator maybe_voxel_it = M_find_voxel(x, y);
             if(maybe_voxel_it.is_ok())
@@ -243,44 +251,6 @@ void Voxel_2D_Controller::remove_voxel(int _index_x, int _index_y)
 
 
 
-bool Voxel_2D_Controller::M_apply_id_to_voxel_recursive(Voxel_2D* _voxel, const Voxel_Intersection_Check_Func& _should_apply_to_whole, const Voxel_Intersection_Check_Func& _should_apply_partially, unsigned int _id)
-{
-    if(!_voxel->is_split() && _voxel->id() == _id)
-        return false;
-
-    if(_should_apply_to_whole(_voxel))
-    {
-        if(_voxel->is_split())
-            _voxel->merge();
-
-        _voxel->set_id(_id);
-        return true;
-    }
-
-    if(!_should_apply_partially(_voxel))
-        return false;
-
-    if(_voxel->reached_max_depth())
-    {
-        _voxel->set_id(_id);
-        return true;
-    }
-
-    if(!_voxel->is_split())
-        _voxel->split();
-
-    bool result = false;
-    for(unsigned int i=0; i<4; ++i)
-    {
-        if(M_apply_id_to_voxel_recursive(_voxel->child(i), _should_apply_to_whole, _should_apply_partially, _id))
-            result = true;
-    }
-
-    return result;
-}
-
-
-
 void Voxel_2D_Controller::apply_id_to_voxels(const Voxel_Intersection_Check_Func& _should_apply_to_whole, const Voxel_Intersection_Check_Func& _should_apply_partially, unsigned int _id)
 {
     L_ASSERT(_should_apply_to_whole);
@@ -288,7 +258,7 @@ void Voxel_2D_Controller::apply_id_to_voxels(const Voxel_Intersection_Check_Func
 
     for(Voxel_List::Iterator it = m_voxels.begin(); !it.end_reached(); ++it)
     {
-        bool changes_were_made = M_apply_id_to_voxel_recursive(it->voxel, _should_apply_to_whole, _should_apply_partially, _id);
+        bool changes_were_made = apply_id_to_voxel_recursive(it->voxel, _should_apply_to_whole, _should_apply_partially, _id);
         if(!changes_were_made)
             continue;
 
