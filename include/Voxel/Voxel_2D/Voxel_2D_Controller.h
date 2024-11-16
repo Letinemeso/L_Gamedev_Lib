@@ -26,6 +26,7 @@ namespace LGL
     public:
         using Voxel_List = LDS::List<Voxel_Data>;
         using Voxel_Action_Callback_Func = LST::Function<void(const Voxel_Data&)>;
+        using Controller_Action_Callback_Func = LST::Function<void()>;
 
     private:
         Voxel_List m_voxels;
@@ -34,6 +35,7 @@ namespace LGL
 
         Voxel_Action_Callback_Func m_on_voxel_added;
         Voxel_Action_Callback_Func m_on_voxel_removed;
+        Controller_Action_Callback_Func m_on_world_center_changed;
 
         float m_expected_voxel_size_x = 0.0f;
         float m_expected_voxel_size_y = 0.0f;
@@ -56,6 +58,7 @@ namespace LGL
 
         inline void set_on_voxel_added_callback(const Voxel_Action_Callback_Func& _value) { m_on_voxel_added = _value; }
         inline void set_on_voxel_removed_callback(const Voxel_Action_Callback_Func& _value) { m_on_voxel_removed = _value; }
+        inline void set_on_world_center_changed_callback(const Controller_Action_Callback_Func& _value) { m_on_world_center_changed = _value; }
         inline void set_expected_voxel_size(float _x, float _y) { m_expected_voxel_size_x = _x; m_expected_voxel_size_y = _y; }
         inline void set_expected_max_depth(unsigned int _value) { m_expected_max_depth = _value; }
         inline void set_save_folder(const std::string& _value) { m_save_folder = _value; m_serializer.set_file_path_format(M_construct_save_file_name_format()); }
@@ -64,7 +67,10 @@ namespace LGL
 
         inline float expected_voxel_size_x() const { return m_expected_voxel_size_x; }
         inline float expected_voxel_size_y() const { return m_expected_voxel_size_y; }
+        inline int world_center_x() const { return m_current_world_center_x; }
+        inline int world_center_y() const { return m_current_world_center_y; }
         inline unsigned int expected_max_depth() const { return m_expected_max_depth; }
+        inline unsigned int voxels_from_center() const { return m_loaded_voxels_amount_from_center; }
         inline Voxel_2D_Generator* generator() { return m_generator; }
 
     private:
