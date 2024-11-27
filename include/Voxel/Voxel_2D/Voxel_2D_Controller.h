@@ -26,7 +26,7 @@ namespace LGL
     public:
         using Voxel_List = LDS::List<Voxel_Data>;
         using Voxel_Action_Callback_Func = LST::Function<void(const Voxel_Data&)>;
-        using Controller_Action_Callback_Func = LST::Function<void()>;
+        using World_Center_Changed_Callback_Func = LST::Function<void(int, int)>;
 
     private:
         Voxel_List m_voxels;
@@ -35,7 +35,7 @@ namespace LGL
 
         Voxel_Action_Callback_Func m_on_voxel_added;
         Voxel_Action_Callback_Func m_on_voxel_removed;
-        Controller_Action_Callback_Func m_on_world_center_changed;
+        World_Center_Changed_Callback_Func m_on_world_center_changed;
 
         float m_expected_voxel_size_x = 0.0f;
         float m_expected_voxel_size_y = 0.0f;
@@ -58,7 +58,7 @@ namespace LGL
 
         inline void set_on_voxel_added_callback(const Voxel_Action_Callback_Func& _value) { m_on_voxel_added = _value; }
         inline void set_on_voxel_removed_callback(const Voxel_Action_Callback_Func& _value) { m_on_voxel_removed = _value; }
-        inline void set_on_world_center_changed_callback(const Controller_Action_Callback_Func& _value) { m_on_world_center_changed = _value; }
+        inline void set_on_world_center_changed_callback(const World_Center_Changed_Callback_Func& _value) { m_on_world_center_changed = _value; }
         inline void set_expected_voxel_size(float _x, float _y) { m_expected_voxel_size_x = _x; m_expected_voxel_size_y = _y; }
         inline void set_expected_max_depth(unsigned int _value) { m_expected_max_depth = _value; }
         inline void set_save_folder(const std::string& _value) { m_save_folder = _value; m_serializer.set_file_path_format(M_construct_save_file_name_format()); }
