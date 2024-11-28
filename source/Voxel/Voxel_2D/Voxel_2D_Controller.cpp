@@ -86,9 +86,6 @@ void Voxel_2D_Controller::reload_voxels(float _world_center_x, float _world_cent
     m_current_world_center_x = M_calculate_world_center_index(_world_center_x, m_expected_voxel_size_x);
     m_current_world_center_y = M_calculate_world_center_index(_world_center_y, m_expected_voxel_size_y);
 
-    if(m_on_world_center_changed)
-        m_on_world_center_changed(m_current_world_center_x, m_current_world_center_y);
-
     int voxels_from_center = m_loaded_voxels_amount_from_center;
 
     for(int x = -voxels_from_center; x < voxels_from_center; ++x)
@@ -119,6 +116,9 @@ void Voxel_2D_Controller::reload_voxels(float _world_center_x, float _world_cent
             m_voxels.push_back(voxel_data);
         }
     }
+
+    if(m_on_world_center_changed)
+        m_on_world_center_changed();
 }
 
 void Voxel_2D_Controller::save_voxels()
@@ -142,9 +142,6 @@ void Voxel_2D_Controller::update_world_center(float _world_center_x, float _worl
 
     if(center_index_x == m_current_world_center_x && center_index_y == m_current_world_center_y && m_voxels.size() > 0)
         return;
-
-    if(m_on_world_center_changed)
-        m_on_world_center_changed(center_index_x, center_index_y);
 
     int voxels_from_center = m_loaded_voxels_amount_from_center;
 
@@ -205,6 +202,9 @@ void Voxel_2D_Controller::update_world_center(float _world_center_x, float _worl
 
     m_current_world_center_x = center_index_x;
     m_current_world_center_y = center_index_y;
+
+    if(m_on_world_center_changed)
+        m_on_world_center_changed();
 }
 
 

@@ -26,7 +26,7 @@ namespace LGL
     public:
         using Voxel_List = LDS::List<Voxel_Data>;
         using Voxel_Action_Callback_Func = LST::Function<void(const Voxel_Data&)>;
-        using World_Center_Changed_Callback_Func = LST::Function<void(int, int)>;
+        using World_Center_Changed_Callback_Func = LST::Function<void()>;
 
     private:
         Voxel_List m_voxels;
