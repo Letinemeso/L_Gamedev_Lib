@@ -11,6 +11,15 @@ namespace LGL
     private:
         friend class Voxel_2D_Serializer;
 
+    public:
+        enum Subvoxel_Position : unsigned int
+        {
+            Bottom_Left = 0,
+            Bottom_Right = 1,
+            Top_Left = 2,
+            Top_Right = 3
+        };
+
     private:
         unsigned int m_max_depth = 1;
         unsigned int m_depth = 0;
