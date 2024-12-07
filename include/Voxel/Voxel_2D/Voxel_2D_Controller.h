@@ -69,8 +69,11 @@ namespace LGL
         inline float expected_voxel_size_y() const { return m_expected_voxel_size_y; }
         inline int world_center_x() const { return m_current_world_center_x; }
         inline int world_center_y() const { return m_current_world_center_y; }
+        inline int world_offset_x() const { return m_current_world_center_x - (int)m_loaded_voxels_amount_from_center; }
+        inline int world_offset_y() const { return m_current_world_center_y - (int)m_loaded_voxels_amount_from_center; }
         inline unsigned int expected_max_depth() const { return m_expected_max_depth; }
         inline unsigned int voxels_from_center() const { return m_loaded_voxels_amount_from_center; }
+        inline unsigned int voxels_in_row() const { return m_loaded_voxels_amount_from_center + m_loaded_voxels_amount_from_center; }
         inline Voxel_2D_Generator* generator() { return m_generator; }
 
     private:

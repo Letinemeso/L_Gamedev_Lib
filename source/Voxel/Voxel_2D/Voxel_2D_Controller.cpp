@@ -109,6 +109,7 @@ void Voxel_2D_Controller::reload_voxels(float _world_center_x, float _world_cent
             voxel_data.index_x = index_x;
             voxel_data.index_y = index_y;
             voxel_data.voxel = voxel;
+            voxel_data.changes_were_made = true;
 
             if(m_on_voxel_added)
                 m_on_voxel_added(voxel_data);
@@ -192,6 +193,7 @@ void Voxel_2D_Controller::update_world_center(float _world_center_x, float _worl
             voxel_data.index_x = x;
             voxel_data.index_y = y;
             voxel_data.voxel = voxel;
+            voxel_data.changes_were_made = true;
 
             if(m_on_voxel_added)
                 m_on_voxel_added(voxel_data);
