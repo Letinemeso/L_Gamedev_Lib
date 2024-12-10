@@ -8,9 +8,6 @@ namespace LGL
 
     class Voxel_2D
     {
-    private:
-        friend class Voxel_2D_Serializer;
-
     public:
         enum Subvoxel_Position : unsigned int
         {
@@ -63,15 +60,29 @@ namespace LGL
 
         inline bool reached_max_depth() const { return m_depth == m_max_depth; }
         inline bool is_split() const { return m_childs[0] != nullptr; }
-        inline bool can_be_split() const { return !reached_max_depth() && !is_split(); }
 
     public:
-        bool should_be_merged() const;
+        virtual bool should_be_merged() const;
+        virtual bool can_be_split() const;
+
+    protected:
+        virtual void M_init_childs();
 
     public:
         void split();
         void merge();
         void merge_subtrees_if_needed();
+
+    protected:
+        std::string M_parse_word(const std::string& _str, unsigned int _offset) const;
+
+    protected:
+        virtual std::string M_serialize_recursive() const;
+        virtual void M_deserialize_recursive(const std::string& _str, unsigned int& _offset);
+
+    public:
+        std::string serialize_data() const;
+        void deserialize_data(const std::string& _str);
 
     };
 
