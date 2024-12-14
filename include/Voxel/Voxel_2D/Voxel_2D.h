@@ -29,7 +29,7 @@ namespace LGL
         float m_size_x = 0.0f;
         float m_size_y = 0.0f;
 
-    private:
+    protected:
         Voxel_2D* m_parent = nullptr;
         Voxel_2D* m_childs[4] { nullptr };
 
