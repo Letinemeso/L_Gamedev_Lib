@@ -56,6 +56,11 @@ void Voxel_2D::M_init_childs()
     m_childs[3] = new Voxel_2D(this, m_max_depth, m_depth + 1, m_id, m_position_x + size_x_halved, m_position_y + size_y_halved, size_x_halved, size_y_halved);
 }
 
+void Voxel_2D::M_before_merge()
+{
+
+}
+
 
 
 void Voxel_2D::split()
@@ -69,6 +74,8 @@ void Voxel_2D::split()
 void Voxel_2D::merge()
 {
     L_ASSERT(is_split());
+
+    M_before_merge();
 
     for(unsigned int i=0; i<4; ++i)
     {

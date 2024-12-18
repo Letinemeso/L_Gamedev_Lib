@@ -67,6 +67,7 @@ namespace LGL
 
     protected:
         virtual void M_init_childs();
+        virtual void M_before_merge();
 
     public:
         void split();

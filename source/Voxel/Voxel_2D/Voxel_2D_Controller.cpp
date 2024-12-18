@@ -250,14 +250,13 @@ void Voxel_2D_Controller::remove_voxel(int _index_x, int _index_y)
 
 
 
-void Voxel_2D_Controller::apply_id_to_voxels(const Voxel_Intersection_Check_Func& _should_apply_to_whole, const Voxel_Intersection_Check_Func& _should_apply_partially, unsigned int _id)
+void Voxel_2D_Controller::process_logic_for_voxels(const Voxel_Modification_Func& _voxel_modification_func)
 {
-    L_ASSERT(_should_apply_to_whole);
-    L_ASSERT(_should_apply_partially);
+    L_ASSERT(_voxel_modification_func);
 
     for(Voxel_List::Iterator it = m_voxels.begin(); !it.end_reached(); ++it)
     {
-        bool changes_were_made = apply_id_to_voxel_recursive(it->voxel, _should_apply_to_whole, _should_apply_partially, _id);
+        bool changes_were_made = _voxel_modification_func(it->voxel);
         if(!changes_were_made)
             continue;
 

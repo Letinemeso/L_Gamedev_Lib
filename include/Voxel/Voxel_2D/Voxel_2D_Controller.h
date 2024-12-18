@@ -92,7 +92,7 @@ namespace LGL
         void remove_voxel(int _index_x, int _index_y);
 
     public:
-        void apply_id_to_voxels(const Voxel_Intersection_Check_Func& _should_apply_to_whole, const Voxel_Intersection_Check_Func& _should_apply_partially, unsigned int _id);
+        void process_logic_for_voxels(const Voxel_Modification_Func& _voxel_modification_func);
 
     public:
         void mark_all_unchanged();
