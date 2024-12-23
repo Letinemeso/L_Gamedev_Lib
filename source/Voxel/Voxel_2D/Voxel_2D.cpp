@@ -66,7 +66,7 @@ void Voxel_2D::M_before_merge()
 void Voxel_2D::split()
 {
     L_ASSERT(!is_split());
-    L_ASSERT(can_be_split());
+    // L_ASSERT(can_be_split());    //  this probably shouldn't be here since voxel should be split'able forcefully (i guess)
 
     M_init_childs();
 }

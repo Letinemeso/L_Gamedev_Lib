@@ -3,17 +3,14 @@
 using namespace LGL;
 
 
-bool LGL::apply_id_to_voxel_recursive(Voxel_2D* _voxel, const Voxel_Intersection_Check_Func& _should_apply_to_whole, const Voxel_Intersection_Check_Func& _should_apply_partially, unsigned int _id)
+bool LGL::apply_data_to_voxel_recursive(Voxel_2D* _voxel, const Voxel_Intersection_Check_Func& _should_apply_to_whole, const Voxel_Intersection_Check_Func& _should_apply_partially, const Voxel_Apply_Data_Func& _apply_data)
 {
-    if(!_voxel->is_split() && _voxel->id() == _id)
-        return false;
-
     if(_should_apply_to_whole(_voxel))
     {
         if(_voxel->is_split())
             _voxel->merge();
 
-        _voxel->set_id(_id);
+        _apply_data(_voxel);
         return true;
     }
 
@@ -22,7 +19,7 @@ bool LGL::apply_id_to_voxel_recursive(Voxel_2D* _voxel, const Voxel_Intersection
 
     if(_voxel->reached_max_depth())
     {
-        _voxel->set_id(_id);
+        _apply_data(_voxel);
         return true;
     }
 
@@ -32,7 +29,7 @@ bool LGL::apply_id_to_voxel_recursive(Voxel_2D* _voxel, const Voxel_Intersection
     bool result = false;
     for(unsigned int i=0; i<4; ++i)
     {
-        if(apply_id_to_voxel_recursive(_voxel->child(i), _should_apply_to_whole, _should_apply_partially, _id))
+        if(apply_data_to_voxel_recursive(_voxel->child(i), _should_apply_to_whole, _should_apply_partially, _apply_data))
             result = true;
     }
 
