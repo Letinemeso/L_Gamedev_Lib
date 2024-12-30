@@ -113,6 +113,12 @@ void Voxel_2D_Controller::reload_voxels(float _world_center_x, float _world_cent
         }
     }
 
+    for(Voxel_List::Iterator it = m_voxels.begin(); !it.end_reached(); ++it)
+    {
+        Voxel_2D* voxel = it->voxel;
+        voxel->merge_subtrees_if_needed();
+    }
+
     if(m_on_world_center_changed)
         m_on_world_center_changed();
 }
@@ -195,6 +201,12 @@ void Voxel_2D_Controller::update_world_center(float _world_center_x, float _worl
 
     m_current_world_center_x = center_index_x;
     m_current_world_center_y = center_index_y;
+
+    for(Voxel_List::Iterator it = m_voxels.begin(); !it.end_reached(); ++it)
+    {
+        Voxel_2D* voxel = it->voxel;
+        voxel->merge_subtrees_if_needed();
+    }
 
     if(m_on_world_center_changed)
         m_on_world_center_changed();
