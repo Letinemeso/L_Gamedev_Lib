@@ -3,7 +3,7 @@
 using namespace LGL;
 
 
-bool LGL::voxel_2d_inside_circle(Voxel_2D* _voxel, const float* _circle_center, float _circle_radius)
+bool LGL::voxel_2d_inside_circle(const Voxel_2D* _voxel, const float* _circle_center, float _circle_radius)
 {
     float radius_squared = _circle_radius * _circle_radius;
 
@@ -28,7 +28,7 @@ bool LGL::voxel_2d_inside_circle(Voxel_2D* _voxel, const float* _circle_center, 
     return true;
 }
 
-bool LGL::voxel_2d_touches_circle(Voxel_2D* _voxel, const float* _circle_center, float _circle_radius)
+bool LGL::voxel_2d_touches_circle(const Voxel_2D* _voxel, const float* _circle_center, float _circle_radius)
 {
     float rectX = _voxel->position_x();
     float rectY = _voxel->position_y();
@@ -66,7 +66,7 @@ bool point_inside_triangle(const float* p, const float* a, const float* b, const
     return !(has_neg && has_pos);
 }
 
-bool LGL::voxel_2d_inside_triangle(Voxel_2D* _voxel, const float* _vertex_0, const float* _vertex_1, const float* _vertex_2)
+bool LGL::voxel_2d_inside_triangle(const Voxel_2D* _voxel, const float* _vertex_0, const float* _vertex_1, const float* _vertex_2)
 {
     float rectCorners[4][2] = {
         {_voxel->position_x(),                     _voxel->position_y()},
@@ -105,7 +105,7 @@ bool segments_intersect(const float* p1, const float* q1, const float* p2, const
     return false;
 }
 
-bool LGL::voxel_2d_touches_triangle(Voxel_2D* _voxel, const float* _vertex_0, const float* _vertex_1, const float* _vertex_2)
+bool LGL::voxel_2d_touches_triangle(const Voxel_2D* _voxel, const float* _vertex_0, const float* _vertex_1, const float* _vertex_2)
 {
     float rectCorners[4][2] = {
         {_voxel->position_x(),                     _voxel->position_y()},
@@ -125,4 +125,52 @@ bool LGL::voxel_2d_touches_triangle(Voxel_2D* _voxel, const float* _vertex_0, co
     }
 
     return false;
+}
+
+
+bool LGL::voxel_2d_inside_rectangle(const Voxel_2D* _voxel, float _left, float _bottom, float _right, float _top)
+{
+    float voxel_left = _voxel->position_x();
+    float voxel_right = voxel_left + _voxel->size_x();
+
+    if(!(voxel_left >= _left && voxel_left <= _right && voxel_right >= _left && voxel_right <= _right))
+        return false;
+
+    float voxel_bottom = _voxel->position_y();
+    float voxel_top = voxel_bottom + _voxel->size_y();
+
+    if(!(voxel_bottom >= _bottom && voxel_bottom <= _top && voxel_top >= _bottom && voxel_top <= _top))
+        return false;
+
+    return true;
+}
+
+bool LGL::voxel_2d_touches_rectangle(const Voxel_2D* _voxel, float _left, float _bottom, float _right, float _top)
+{
+    float voxel_left = _voxel->position_x();
+    float voxel_right = voxel_left + _voxel->size_x();
+    float voxel_bottom = _voxel->position_y();
+    float voxel_top = voxel_bottom + _voxel->size_y();
+
+    bool touches_horizontally = false;
+    if(voxel_left >= _left && voxel_left <= _right)
+        touches_horizontally = true;
+    if(voxel_right >= _left && voxel_right <= _right)
+        touches_horizontally = true;
+    if(_left >= voxel_left && _left <= voxel_right)
+        touches_horizontally = true;
+    if(_right >= voxel_left && _right <= voxel_right)
+        touches_horizontally = true;
+
+    bool touches_vertically = false;
+    if(voxel_bottom >= _bottom && voxel_bottom <= _top)
+        touches_vertically = true;
+    if(voxel_top >= _bottom && voxel_top <= _top)
+        touches_vertically = true;
+    if(_bottom >= voxel_bottom && _bottom <= voxel_top)
+        touches_vertically = true;
+    if(_top >= voxel_bottom && _top <= voxel_top)
+        touches_vertically = true;
+
+    return touches_vertically && touches_horizontally;
 }
