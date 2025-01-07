@@ -17,7 +17,7 @@ namespace LGL
             Top_Right = 3
         };
 
-    private:
+    protected:
         unsigned int m_max_depth = 1;
         unsigned int m_depth = 0;
 
@@ -39,6 +39,9 @@ namespace LGL
     public:
         Voxel_2D(Voxel_2D* _parent, unsigned int _max_depth, unsigned int _depth, unsigned int _id, float _position_x, float _position_y, float _size_x, float _size_y);
         ~Voxel_2D();
+
+    public:
+        virtual Voxel_2D* construct_copy() const;
 
     public:
         inline void set_id(unsigned int _value) { m_id = _value; }

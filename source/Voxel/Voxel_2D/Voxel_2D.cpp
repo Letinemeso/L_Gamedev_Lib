@@ -17,6 +17,24 @@ Voxel_2D::~Voxel_2D()
 
 
 
+Voxel_2D* Voxel_2D::construct_copy() const
+{
+    Voxel_2D* result = new Voxel_2D(nullptr, m_max_depth, m_depth, m_id, m_position_x, m_position_y, m_size_x, m_size_y);
+
+    if(!is_split())
+        return result;
+
+    for(unsigned int i=0; i<4; ++i)
+    {
+        result->m_childs[i] = m_childs[i]->construct_copy();
+        result->m_childs[i]->m_parent = result;
+    }
+
+    return result;
+}
+
+
+
 bool Voxel_2D::should_be_merged() const
 {
     if(!is_split())

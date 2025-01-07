@@ -43,13 +43,12 @@ namespace LGL
 
     private:
         Voxel_2D_Serializer* m_serializer = nullptr;
-        unsigned int m_loaded_voxels_amount_from_center = 2;
-
-    private:
         Voxel_2D_Generator* m_generator = nullptr;
 
+        unsigned int m_loaded_voxels_amount_from_center = 2;
+
     public:
-        Voxel_2D_Controller(Voxel_2D_Serializer* _voxel_serializer);
+        Voxel_2D_Controller();
         ~Voxel_2D_Controller();
 
     public:
@@ -61,6 +60,7 @@ namespace LGL
         inline void set_expected_voxel_size(float _x, float _y) { m_expected_voxel_size_x = _x; m_expected_voxel_size_y = _y; }
         inline void set_expected_max_depth(unsigned int _value) { m_expected_max_depth = _value; }
         inline void set_generator(Voxel_2D_Generator* _ptr) { delete m_generator; m_generator = _ptr; }
+        inline void set_serializer(Voxel_2D_Serializer* _ptr) { delete m_serializer; m_serializer = _ptr; }
         inline void set_loaded_voxels_amount_from_center(unsigned int _value) { m_loaded_voxels_amount_from_center = _value; }
 
         inline float expected_voxel_size_x() const { return m_expected_voxel_size_x; }

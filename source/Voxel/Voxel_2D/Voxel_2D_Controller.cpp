@@ -5,14 +5,15 @@
 using namespace LGL;
 
 
-Voxel_2D_Controller::Voxel_2D_Controller(Voxel_2D_Serializer* _voxel_serializer)
-    : m_serializer(_voxel_serializer)
+Voxel_2D_Controller::Voxel_2D_Controller()
 {
 
 }
 
 Voxel_2D_Controller::~Voxel_2D_Controller()
 {
+    save_voxels();
+
     for(Voxel_List::Iterator it = m_voxels.begin(); !it.end_reached(); ++it)
     {
         Voxel_Data& voxel_data = *it;
@@ -90,7 +91,10 @@ void Voxel_2D_Controller::reload_voxels(float _world_center_x, float _world_cent
             int index_x = m_current_world_center_x + x;
             int index_y = m_current_world_center_y + y;
 
-            Voxel_2D* voxel = m_serializer->load_voxel(index_x, index_y);
+            Voxel_2D* voxel = nullptr;
+            if(m_serializer)
+                voxel = m_serializer->load_voxel(index_x, index_y);
+
             if(!voxel)
             {
                 if(!m_generator)
@@ -125,6 +129,9 @@ void Voxel_2D_Controller::reload_voxels(float _world_center_x, float _world_cent
 
 void Voxel_2D_Controller::save_voxels()
 {
+    if(!m_serializer)
+        return;
+
     for(Voxel_List::Iterator it = m_voxels.begin(); !it.end_reached(); ++it)
     {
         Voxel_Data& voxel_data = *it;
@@ -159,7 +166,8 @@ void Voxel_2D_Controller::update_world_center(float _world_center_x, float _worl
             continue;
         }
 
-        m_serializer->save_voxel(voxel_data.voxel, voxel_data.index_x, voxel_data.index_y);
+        if(m_serializer)
+            m_serializer->save_voxel(voxel_data.voxel, voxel_data.index_x, voxel_data.index_y);
 
         if(m_on_voxel_removed)
             m_on_voxel_removed(voxel_data);
@@ -176,7 +184,10 @@ void Voxel_2D_Controller::update_world_center(float _world_center_x, float _worl
             if(maybe_voxel_it.is_ok())
                 continue;
 
-            Voxel_2D* voxel = m_serializer->load_voxel(x, y);
+            Voxel_2D* voxel = nullptr;
+            if(m_serializer)
+                voxel = m_serializer->load_voxel(x, y);
+
             if(!voxel)
             {
                 if(!m_generator)
