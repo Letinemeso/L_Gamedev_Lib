@@ -78,7 +78,7 @@ void Pathfinder::M_update_neighbours(Step_Node* _nodes, unsigned int _id) const
     }
 }
 
-LDS::Vector<unsigned int> Pathfinder::M_backtrace_path(const Step_Node *_nodes, unsigned int _start_id, unsigned int _finish_id) const
+Pathfinder::Path Pathfinder::M_backtrace_path(const Step_Node *_nodes, unsigned int _start_id, unsigned int _finish_id) const
 {
     unsigned int path_length = 0;
 
@@ -89,7 +89,7 @@ LDS::Vector<unsigned int> Pathfinder::M_backtrace_path(const Step_Node *_nodes, 
         ++path_length;
     }
 
-    LDS::Vector<unsigned int> result;
+    Path result;
     result.resize(path_length);
 
     current_id = _finish_id;

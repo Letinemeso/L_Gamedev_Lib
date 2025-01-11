@@ -1,5 +1,4 @@
-#ifndef PATHFINDER_H
-#define PATHFINDER_H
+#pragma once
 
 #include <Data_Structures/Vector.h>
 #include <Stuff/Function_Wrapper.h>
@@ -46,8 +45,11 @@ namespace LGL
         const Graph* m_graph = nullptr;
         LST::Function<unsigned int(unsigned int, unsigned int)> m_calculate_distance_func;
 
+    public:
+        using Path = LDS::Vector<unsigned int>;
+
     private:
-        LDS::Vector<unsigned int> m_path_result;
+        Path m_path_result;
 
     public:
         Pathfinder();
@@ -63,12 +65,12 @@ namespace LGL
         inline void set_distance_calculation_func(const LST::Function<unsigned int(unsigned int, unsigned int)> _calculate_distance_func) { m_calculate_distance_func = _calculate_distance_func; }
 
     public:
-        inline const LDS::Vector<unsigned int>& path_result() const { return m_path_result; }
+        inline const Path& path_result() const { return m_path_result; }
 
     private:
         unsigned int M_find_closest(const Step_Node* _nodes, unsigned int _amount) const;
         void M_update_neighbours(Step_Node* _nodes, unsigned int _id) const;
-        LDS::Vector<unsigned int> M_backtrace_path(const Step_Node* _nodes, unsigned int _start_id, unsigned int _finish_id) const;
+        Path M_backtrace_path(const Step_Node* _nodes, unsigned int _start_id, unsigned int _finish_id) const;
 
     public:
         void process(unsigned int _start_id, unsigned int _finish_id);
@@ -76,5 +78,3 @@ namespace LGL
     };
 
 }
-
-#endif // PATHFINDER_H
