@@ -17,8 +17,8 @@ namespace LGL
         public:
             unsigned int previous = 0xFFFFFFFF;
 
-            unsigned int distance_from_start = 0xFFFFFFFF;
-            unsigned int distance_to_finish = 0;
+            float distance_from_start = -1.0f;
+            float distance_to_finish = 0.0f;
 
             bool is_processed = false;
             bool is_being_processed = false;
@@ -26,8 +26,8 @@ namespace LGL
         public:
             inline bool operator<(const Step_Node& _other) const
             {
-                unsigned int this_total_value = distance_to_finish + distance_from_start;
-                unsigned int other_total_value = _other.distance_to_finish + _other.distance_from_start;
+                float this_total_value = distance_to_finish + distance_from_start;
+                float other_total_value = _other.distance_to_finish + _other.distance_from_start;
 
                 if(this_total_value < other_total_value)
                     return true;
@@ -41,9 +41,12 @@ namespace LGL
             }
         };
 
+    public:
+        using Distance_Calculation_Func = LST::Function<float(unsigned int, unsigned int)>;
+
     private:
         const Graph* m_graph = nullptr;
-        LST::Function<unsigned int(unsigned int, unsigned int)> m_calculate_distance_func;
+        Distance_Calculation_Func m_calculate_distance_func;
 
     public:
         using Path = LDS::Vector<unsigned int>;
@@ -56,13 +59,13 @@ namespace LGL
         Pathfinder(const Pathfinder& _other);
         void operator=(const Pathfinder& _other);
 
-        Pathfinder(const Graph* _graph, LST::Function<unsigned int(unsigned int, unsigned int)> _calculate_distance_func);
+        Pathfinder(const Graph* _graph, const Distance_Calculation_Func& _calculate_distance_func);
 
         ~Pathfinder();
 
     public:
         inline void set_graph(const Graph* _graph) { m_graph = _graph; }
-        inline void set_distance_calculation_func(const LST::Function<unsigned int(unsigned int, unsigned int)> _calculate_distance_func) { m_calculate_distance_func = _calculate_distance_func; }
+        inline void set_distance_calculation_func(const Distance_Calculation_Func& _calculate_distance_func) { m_calculate_distance_func = _calculate_distance_func; }
 
     public:
         inline const Path& path_result() const { return m_path_result; }

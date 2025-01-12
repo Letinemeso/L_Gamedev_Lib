@@ -21,7 +21,7 @@ void Pathfinder::operator=(const Pathfinder& _other)
 }
 
 
-Pathfinder::Pathfinder(const Graph* _graph, LST::Function<unsigned int(unsigned int, unsigned int)> _calculate_distance_func)
+Pathfinder::Pathfinder(const Graph* _graph, const Distance_Calculation_Func& _calculate_distance_func)
 {
     set_graph(_graph);
     set_distance_calculation_func(_calculate_distance_func);
@@ -57,20 +57,23 @@ unsigned int Pathfinder::M_find_closest(const Step_Node *_nodes, unsigned int _a
 
 void Pathfinder::M_update_neighbours(Step_Node* _nodes, unsigned int _id) const
 {
-    for(LDS::Map<unsigned int, unsigned int>::Const_Iterator it = m_graph->nodes_links(_id).iterator(); !it.end_reached(); ++it)
+    for(Graph_Node::Links_Map::Const_Iterator it = m_graph->nodes_links(_id).iterator(); !it.end_reached(); ++it)
     {
         const unsigned int neighbour_id = it.key();
-        unsigned int distance_to_neighbour = *it;
 
         if(_nodes[neighbour_id].is_processed)
             continue;
 
-        unsigned int distance_to_neighbour_from_start = _nodes[_id].distance_from_start + distance_to_neighbour;
-
         if(!_nodes[neighbour_id].is_being_processed)
             _nodes[neighbour_id].is_being_processed = true;
 
-        if(_nodes[neighbour_id].distance_from_start > distance_to_neighbour_from_start)
+        float distance_to_neighbour = *it;
+
+        float distance_to_neighbour_from_start = distance_to_neighbour;
+        if(_nodes[_id].distance_from_start > 0.0f)
+            distance_to_neighbour_from_start += _nodes[_id].distance_from_start;
+
+        if(_nodes[neighbour_id].distance_from_start < 0.0f || (_nodes[neighbour_id].distance_from_start > distance_to_neighbour_from_start))
         {
             _nodes[neighbour_id].distance_from_start = distance_to_neighbour_from_start;
             _nodes[neighbour_id].previous = _id;

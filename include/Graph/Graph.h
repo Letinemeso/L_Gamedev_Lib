@@ -1,5 +1,4 @@
-#ifndef GRAPH_H
-#define GRAPH_H
+#pragma once
 
 #include <Graph/Graph_Node.h>
 
@@ -29,16 +28,14 @@ namespace LGL
         void clear();
         void allocate_nodes(unsigned int _amount);
 
-        void link_nodes(unsigned int _id_1, unsigned int _id_2, unsigned int _distance, bool _mutually = true);
+        void link_nodes(unsigned int _id_1, unsigned int _id_2, float _distance, bool _mutually = true);
         void unlink_nodes(unsigned int _id_1, unsigned int _id_2, bool _mutually = true);
 
     public:
-        unsigned int distance_if_linked(unsigned int _id_1, unsigned int _id_2) const;
+        float distance_if_linked(unsigned int _id_1, unsigned int _id_2) const;
         unsigned int nodes_links_amount(unsigned int _id) const;
-        const LDS::Map<unsigned int, unsigned int>& nodes_links(unsigned int _id) const;
+        const Graph_Node::Links_Map& nodes_links(unsigned int _id) const;
 
     };
 
 }
-
-#endif // GRAPH_H
