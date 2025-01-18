@@ -73,6 +73,7 @@ namespace LGL
         inline unsigned int voxels_from_center() const { return m_loaded_voxels_amount_from_center; }
         inline unsigned int voxels_in_row() const { return m_loaded_voxels_amount_from_center + m_loaded_voxels_amount_from_center; }
         inline Voxel_2D_Generator* generator() { return m_generator; }
+        inline Voxel_2D_Serializer* serializer() { return m_serializer; }
 
     private:
         Voxel_List::Iterator M_find_voxel(Voxel_2D* _voxel);
