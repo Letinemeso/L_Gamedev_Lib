@@ -40,8 +40,10 @@ unsigned int Pathfinder::M_find_closest(const Step_Node *_nodes, unsigned int _a
     unsigned int result_id = _amount;
 
     for(unsigned int i=0; i<_amount && result_id == _amount; ++i)
+    {
         if(!_nodes[i].is_processed && _nodes[i].is_being_processed)
             result_id = i;
+    }
 
     for(unsigned int i=result_id; i<_amount; ++i)
     {
@@ -60,12 +62,13 @@ void Pathfinder::M_update_neighbours(Step_Node* _nodes, unsigned int _id) const
     for(Graph_Node::Links_Map::Const_Iterator it = m_graph->nodes_links(_id).iterator(); !it.end_reached(); ++it)
     {
         const unsigned int neighbour_id = it.key();
+        Step_Node& current_step_node = _nodes[neighbour_id];
 
-        if(_nodes[neighbour_id].is_processed)
+        if(current_step_node.is_processed)
             continue;
 
-        if(!_nodes[neighbour_id].is_being_processed)
-            _nodes[neighbour_id].is_being_processed = true;
+        if(!current_step_node.is_being_processed)
+            current_step_node.is_being_processed = true;
 
         float distance_to_neighbour = *it;
 
@@ -73,10 +76,10 @@ void Pathfinder::M_update_neighbours(Step_Node* _nodes, unsigned int _id) const
         if(_nodes[_id].distance_from_start > 0.0f)
             distance_to_neighbour_from_start += _nodes[_id].distance_from_start;
 
-        if(_nodes[neighbour_id].distance_from_start < 0.0f || (_nodes[neighbour_id].distance_from_start > distance_to_neighbour_from_start))
+        if(current_step_node.distance_from_start < 0.0f || (current_step_node.distance_from_start > distance_to_neighbour_from_start))
         {
-            _nodes[neighbour_id].distance_from_start = distance_to_neighbour_from_start;
-            _nodes[neighbour_id].previous = _id;
+            current_step_node.distance_from_start = distance_to_neighbour_from_start;
+            current_step_node.previous = _id;
         }
     }
 }
