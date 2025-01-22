@@ -21,7 +21,6 @@ namespace LGL
             float distance_to_finish = 0.0f;
 
             bool is_processed = false;
-            bool is_being_processed = false;
 
         public:
             inline bool operator<(const Step_Node& _other) const
@@ -33,6 +32,7 @@ namespace LGL
                     return true;
                 else if(this_total_value > other_total_value)
                     return false;
+
                 return distance_to_finish < _other.distance_to_finish;
             }
             inline bool operator>(const Step_Node& _other) const
