@@ -26,7 +26,7 @@ Voxel_2D_Controller::~Voxel_2D_Controller()
 
 
 
-typename Voxel_2D_Controller::Voxel_List::Iterator Voxel_2D_Controller::M_find_voxel(Voxel_2D* _voxel)
+typename Voxel_2D_Controller::Voxel_List::Iterator Voxel_2D_Controller::M_find_voxel(const Voxel_2D* _voxel)
 {
     for(Voxel_List::Iterator it = m_voxels.begin(); !it.end_reached(); ++it)
     {
@@ -238,6 +238,7 @@ void Voxel_2D_Controller::insert_voxel(Voxel_2D* _voxel)
     voxel_data.index_y = _voxel->position_y() / m_expected_voxel_size_y;
     L_ASSERT(!M_find_voxel(voxel_data.index_x, voxel_data.index_y).is_ok());
     voxel_data.voxel = _voxel;
+    voxel_data.changes_were_made = true;
 
     if(m_on_voxel_added)
         m_on_voxel_added(voxel_data);
@@ -269,6 +270,33 @@ void Voxel_2D_Controller::remove_voxel(int _index_x, int _index_y)
 
     delete voxel_data.voxel;
     m_voxels.erase(voxel_it);
+}
+
+void Voxel_2D_Controller::reload_voxel_if_registered(int _index_x, int _index_y)
+{
+    Voxel_List::Iterator voxel_it = M_find_voxel(_index_x, _index_y);
+    if(!voxel_it.is_ok())
+        return;
+
+    Voxel_Data& voxel_data = *voxel_it;
+
+    if(m_on_voxel_removed)
+        m_on_voxel_removed(voxel_data);
+
+    delete voxel_data.voxel;
+    voxel_data.voxel = nullptr;
+
+    if(m_serializer)
+        voxel_data.voxel = m_serializer->load_voxel(_index_x, _index_y);
+    else if(m_generator)
+        voxel_data.voxel = m_generator->generate(_index_x, _index_y, m_expected_max_depth, m_expected_voxel_size_x, m_expected_voxel_size_y);
+
+    L_ASSERT(voxel_data.voxel);
+
+    if(m_on_voxel_added)
+        m_on_voxel_added(voxel_data);
+
+    voxel_data.changes_were_made = true;
 }
 
 

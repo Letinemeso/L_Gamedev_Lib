@@ -76,7 +76,7 @@ namespace LGL
         inline Voxel_2D_Serializer* serializer() { return m_serializer; }
 
     private:
-        Voxel_List::Iterator M_find_voxel(Voxel_2D* _voxel);
+        Voxel_List::Iterator M_find_voxel(const Voxel_2D* _voxel);
         Voxel_List::Iterator M_find_voxel(int _index_x, int _index_y);
         std::string M_construct_save_file_name_format() const;
         int M_calculate_world_center_index(float _world_center, float _voxel_size) const;
@@ -91,6 +91,7 @@ namespace LGL
         void insert_voxel(Voxel_2D* _voxel);
         void remove_voxel(Voxel_2D* _voxel);
         void remove_voxel(int _index_x, int _index_y);
+        void reload_voxel_if_registered(int _index_x, int _index_y);
 
     public:
         void process_logic_for_voxels(const Voxel_Modification_Func& _voxel_modification_func);
