@@ -84,6 +84,7 @@ namespace LGL
     public:
         void remove_all_voxels();
         void reload_voxels(float _world_center_x, float _world_center_y);
+        void reload_voxels(bool _should_save);
         void save_voxels();
         void update_world_center(float _world_center_x, float _world_center_y);
 

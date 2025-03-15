@@ -76,11 +76,18 @@ void Voxel_2D_Controller::remove_all_voxels()
 
 void Voxel_2D_Controller::reload_voxels(float _world_center_x, float _world_center_y)
 {
-    save_voxels();
-    remove_all_voxels();
-
     m_current_world_center_x = M_calculate_world_center_index(_world_center_x, m_expected_voxel_size_x);
     m_current_world_center_y = M_calculate_world_center_index(_world_center_y, m_expected_voxel_size_y);
+
+    reload_voxels(true);
+}
+
+void Voxel_2D_Controller::reload_voxels(bool _should_save)
+{
+    if(_should_save)
+        save_voxels();
+
+    remove_all_voxels();
 
     int voxels_from_center = m_loaded_voxels_amount_from_center;
 
