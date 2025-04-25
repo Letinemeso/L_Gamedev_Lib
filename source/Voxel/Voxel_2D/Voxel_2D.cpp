@@ -1,5 +1,7 @@
 #include <Voxel/Voxel_2D/Voxel_2D.h>
 
+#include <string>
+
 using namespace LGL;
 
 
