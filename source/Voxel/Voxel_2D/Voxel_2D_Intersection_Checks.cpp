@@ -155,21 +155,21 @@ bool LGL::voxel_2d_touches_rectangle(const Voxel_2D* _voxel, float _left, float 
     bool touches_horizontally = false;
     if(voxel_left >= _left && voxel_left <= _right)
         touches_horizontally = true;
-    if(voxel_right >= _left && voxel_right <= _right)
+    else if(voxel_right >= _left && voxel_right <= _right)
         touches_horizontally = true;
-    if(_left >= voxel_left && _left <= voxel_right)
+    else if(_left >= voxel_left && _left <= voxel_right)
         touches_horizontally = true;
-    if(_right >= voxel_left && _right <= voxel_right)
+    else if(_right >= voxel_left && _right <= voxel_right)
         touches_horizontally = true;
 
     bool touches_vertically = false;
     if(voxel_bottom >= _bottom && voxel_bottom <= _top)
         touches_vertically = true;
-    if(voxel_top >= _bottom && voxel_top <= _top)
+    else if(voxel_top >= _bottom && voxel_top <= _top)
         touches_vertically = true;
-    if(_bottom >= voxel_bottom && _bottom <= voxel_top)
+    else if(_bottom >= voxel_bottom && _bottom <= voxel_top)
         touches_vertically = true;
-    if(_top >= voxel_bottom && _top <= voxel_top)
+    else if(_top >= voxel_bottom && _top <= voxel_top)
         touches_vertically = true;
 
     return touches_vertically && touches_horizontally;
