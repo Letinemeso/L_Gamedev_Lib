@@ -11,6 +11,11 @@ namespace LGL
         In_Progress
     };
 
+    inline LGL::BT_Execution_Result bool_to_bt_result(bool _value)
+    {
+        return _value ? BT_Execution_Result::Success : BT_Execution_Result::Fail;
+    }
+
     template <typename... Args>
     class Node_Base
     {
