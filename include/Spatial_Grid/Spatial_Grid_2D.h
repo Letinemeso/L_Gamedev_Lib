@@ -42,6 +42,8 @@ namespace LGL
         void resize(const Spatial_Grid_2D_Indices& _size);
         void clear();
 
+        void fill(const Stored_Type& _with);
+
     private:
         unsigned int M_calculate_array_index(const Spatial_Grid_2D_Indices& _indices) const;
 
@@ -156,6 +158,14 @@ namespace LGL
         m_stored_data = nullptr;
         m_stored_data_amount = 0;
         m_size = { 0, 0 };
+    }
+
+
+    template<typename Stored_Type>
+    void Spatial_Grid_2D<Stored_Type>::fill(const Stored_Type& _with)
+    {
+        for(unsigned int i = 0; i < m_stored_data_amount; ++i)
+            m_stored_data[i] = _with;
     }
 
 
